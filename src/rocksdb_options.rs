@@ -78,7 +78,7 @@ impl BlockBasedOptions {
     pub fn set_block_size(&mut self, size: u64) {
         unsafe {
             rocksdb_ffi::rocksdb_block_based_options_set_block_size(self.inner,
-                                                                    size);
+                                                                    size as u32);
         }
     }
 
@@ -302,7 +302,7 @@ impl Options {
     pub fn set_write_buffer_size(&mut self, size: size_t) {
         unsafe {
             rocksdb_ffi::rocksdb_options_set_write_buffer_size(self.inner,
-                                                               size);
+                                                               size as u64);
         }
     }
 

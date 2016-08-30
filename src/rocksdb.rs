@@ -812,9 +812,9 @@ impl DB {
                 rocksdb_ffi::rocksdb_approximate_sizes(self.inner,
                                                        n,
                                                        start_key_ptr,
-                                                       start_key_len_ptr,
+                                                       start_key_len_ptr as *const _,
                                                        end_key_ptr,
-                                                       end_key_len_ptr,
+                                                       end_key_len_ptr as *const _,
                                                        size_ptr)
             },
             Some(cf) => unsafe {
@@ -822,9 +822,9 @@ impl DB {
                                                           cf,
                                                           n,
                                                           start_key_ptr,
-                                                          start_key_len_ptr,
+                                                          start_key_len_ptr as *const _,
                                                           end_key_ptr,
-                                                          end_key_len_ptr,
+                                                          end_key_len_ptr as *const _,
                                                           size_ptr)
             },
         }
@@ -907,12 +907,12 @@ impl DB {
             let value = match cf {
                 None => {
                     rocksdb_ffi::rocksdb_property_value(self.inner,
-                                                        prop_name.as_ptr())
+                                                        prop_name.as_ptr() as *const _)
                 }
                 Some(cf) => {
                     rocksdb_ffi::rocksdb_property_value_cf(self.inner,
                                                            cf,
-                                                           prop_name.as_ptr())
+                                                           prop_name.as_ptr() as *const _)
                 }
             };
 
@@ -921,7 +921,7 @@ impl DB {
             }
 
             // Must valid UTF-8 format.
-            let s = CStr::from_ptr(value).to_str().unwrap().to_owned();
+            let s = CStr::from_ptr(value as *const _).to_str().unwrap().to_owned();
             libc::free(value as *mut c_void);
             Some(s)
         }
